@@ -16,14 +16,14 @@ final class LoggingEventDispatcher implements EventDispatcherInterface
     {
     }
 
-    public function dispatch(object $event)
+    public function dispatch(object $event): object
     {
-        $this->logger->info('Отправлено событие: ' . get_class($event));
+        $this->logger->info('Отправлено событие: ', ['object' => $event]);
 
-        $result = $this->eventDispatcher->dispatch($event);
+        $this->eventDispatcher->dispatch($event);
 
-        $this->logger->info('Результат отправки события: ' . get_class($event));
+        $this->logger->info('Результат отправки события: ', ['object' => $event]);
 
-        return $result;
+        return $event;
     }
 }
