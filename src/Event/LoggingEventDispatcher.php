@@ -6,6 +6,7 @@ namespace App\Event;
 
 use Psr\EventDispatcher\EventDispatcherInterface;
 use Psr\Log\LoggerInterface;
+use Throwable;
 
 final class LoggingEventDispatcher implements EventDispatcherInterface
 {
@@ -20,7 +21,16 @@ final class LoggingEventDispatcher implements EventDispatcherInterface
     {
         $this->eventLogger->info('Отправлено событие: ', ['object' => $event]);
 
-        $this->eventDispatcher->dispatch($event);
+        try {
+            $this->eventDispatcher->dispatch($event);
+        } catch (Throwable $e) {
+            $this->eventLogger->error('Не удалось отправить событие: ', [
+                'object' => $event,
+                'message' => $e->getMessage(),
+                'line' => $e->getLine(),
+                'file' => $e->getFile(),
+            ]);
+        }
 
         $this->eventLogger->info('Результат отправки события: ', ['object' => $event]);
 
